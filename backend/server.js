@@ -3,10 +3,13 @@ import express from 'express';
 import mongoose from 'mongoose';
 import mongoDBKey from './config/mongoDB_key.js';
 import Messages from './dbMessages.js';
+import pusher from './config/pusher.js';
 
 // app config
 const app = express();
 const port = process.env.PORT || 9000
+
+
 
 // middleware
 app.use(express.json());
@@ -20,7 +23,28 @@ mongoose.connect(connection_url, {
     useUnifiedTopology: true
 })
 
-// ????
+const db = mongoose.connection
+
+db.once('open', () => {
+    console.log(('DB connected'))
+
+    const msgCollection = db.collection("messagecontents");
+    const changeStream = msgCollection.watch();
+
+    changeStream.on('change', (change) => {
+        console.log(change);
+
+        if (change.operationType === 'insert') {
+            const messageDetails = change.fullDocument;
+            pusher.trigger('messages', 'inserted', {
+                    name: messageDetails.user,
+                    message: messageDetails.message,
+            });
+        } else {
+            console.log('Error triggering Pusher')
+        }
+    });
+});
 
 // api routes
 app.get("/", (req, res) => res.status(200).send('hello world'))

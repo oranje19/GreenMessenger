@@ -7,4 +7,5 @@ const greenMessengerSchema = mongoose.Schema({
     received: Boolean
 });
 
-export default mongoose.model('messageContent', greenMessengerSchema)
+// collection
+export default mongoose.model('messagecontents', greenMessengerSchema)
