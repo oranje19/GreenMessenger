@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import mongoDBKey from './config/mongoDB_key.js';
 import Messages from './dbMessages.js';
 import pusher from './config/pusher.js';
+import cors from 'cors';
 
 // app config
 const app = express();
@@ -13,6 +14,13 @@ const port = process.env.PORT || 9000
 
 // middleware
 app.use(express.json());
+app.use(cors())
+
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Headers", "*");
+    next();
+})
 
 // DB config
 const connection_url = `mongodb+srv://admin:${mongoDBKey}@cluster0.ukz0w.mongodb.net/greenMessengerDB?retryWrites=true&w=majority`;
@@ -37,8 +45,9 @@ db.once('open', () => {
         if (change.operationType === 'insert') {
             const messageDetails = change.fullDocument;
             pusher.trigger('messages', 'inserted', {
-                    name: messageDetails.user,
+                    name: messageDetails.name,
                     message: messageDetails.message,
+                    timestamp: messageDetails.timestamp
             });
         } else {
             console.log('Error triggering Pusher')
