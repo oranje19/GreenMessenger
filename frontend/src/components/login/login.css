@@ -23,7 +23,10 @@
 .login__container > button {
     margin-top: 50px;
     text-transform: inherit !important;
-    background-color: #0a8d48 !important;
+    /* background-color: #0a8d48 !important; */
+    background-image: url('https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png');
+    height: 45px;
+    width: 192px;
     color: white;
 }
 

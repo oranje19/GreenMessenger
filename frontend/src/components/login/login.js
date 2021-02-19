@@ -32,7 +32,7 @@ function Login() {
                 </div>
 
                 <Button onClick={signIn}>
-                    Sign In With Google
+                    {/* Sign in with Google */}
                 </Button>
                 <div className="login__footer">
                     <IconButton>
