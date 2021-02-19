@@ -1,14 +1,35 @@
 import { Avatar, IconButton } from '@material-ui/core';
 import { Chat, DonutLarge, ExpandMore, SearchOutlined } from '@material-ui/icons';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import db from '../../firebase';
+import { useStateValue } from '../../stateProvider';
 import "./sidebar.css";
 import SidebarChat from './sidebarChat';
 
 function Sidebar() {
+
+    const [{ user }, dispatch] = useStateValue();
+    const [rooms, setRooms] = useState([]);
+
+    useEffect(() => {
+        const unsubscribe = db.collection('rooms').onSnapshot(snapshot => (
+            setRooms(snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    data: doc.data()
+                }))
+            )
+        ));
+
+        return () => {
+            unsubscribe();
+        }
+        
+    }, [])
+
     return (
         <div className='sidebar'>
             <div className="sidebar__header">
-                <Avatar src="https://media-exp1.licdn.com/dms/image/C5603AQHq0XoSmVfZGg/profile-displayphoto-shrink_800_800/0/1592124686442?e=1619049600&v=beta&t=PldstQefEmQSYBPymB8kB3A8rvs0MOCvGBQaRYYJsZo" />
+                <Avatar src={user?.photoURL} />
                 <div className="sidebar__headerRight">
                     <IconButton>
                         <DonutLarge />
@@ -34,9 +55,13 @@ function Sidebar() {
 
             <div className="sidebar__chats">
                 <SidebarChat addNewChat />
-                <SidebarChat />
-                <SidebarChat />
-                <SidebarChat />
+                {rooms.map(room => (
+                    <SidebarChat 
+                        key={room.id} 
+                        id={room.id} 
+                        name={room.data.name}
+                    />
+                ))}
             </div>
         </div>
     )
