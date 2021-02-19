@@ -27,3 +27,22 @@
     color: white;
 }
 
+.login__footer {
+    margin-top: 50px;
+    margin-bottom: -50px;
+}
+
+.login__footer__linkedin {
+    transform: scale(1.8);
+    color: #0e76a8;
+}
+
+.login__footer__github {
+    transform: scale(1.5);
+    color: black;
+}
+
+.login__footer__portfolio {
+    transform: scale(1.8);
+    color: grey;
+}
